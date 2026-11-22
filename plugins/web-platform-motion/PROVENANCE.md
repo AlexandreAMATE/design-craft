@@ -1,6 +1,6 @@
 # Provenance - web-platform-motion
 
-Three skills from two upstream repositories.
+Four skills from three upstream repositories.
 
 ## modern-web-guidance (Apache-2.0)
 - Source: https://github.com/GoogleChrome/modern-web-guidance
@@ -25,3 +25,17 @@ Three skills from two upstream repositories.
   - `css-native/SKILL.md`: in the "CSS Native vs Library" table the recommendations GSAP, Framer Motion and GSAP MorphSVG were replaced by "Outside the platform: propose a permissively licensed library to the project owner (weight, licence, platform alternative) before using it" (with the factual native-limits remarks kept); the closing rule of thumb now says to propose a library to the owner first.
   - `canvas-generative/SKILL.md`: the "Loading Sub-skills" table pointing to `../motion-principles` and `../threejs-r3f` now says "not covered here" and names the sibling marketplace plugins; heading renamed "Quick Reference".
   - No shell `cat` loading blocks or references to cast/paint/bunshin existed in these two skills (checked by grep).
+
+## svg-scroll-recipes (MIT)
+- Source: https://github.com/mblode/agent-skills (path skills/ui-animation/references/)
+- Commit: ff9805a3dabf4529f4d88f6b3f09c5a33cb0fcb6 (2026-11-20T09:40:48+11:00, verified on disk)
+- Licence: MIT, "Copyright (c) 2026 Matthew Blode" (`LICENSE-mblode-MIT`, copied from upstream LICENSE.md)
+- Kept: references/svg-animation.md, scroll-animations.md, clip-path-techniques.md, debugging-symptoms.md (names matched exactly).
+- Dropped: upstream ui-animation SKILL.md, all other references, scripts/ (python), evals/, and every other skill of the repo.
+- New (original, MIT): `skills/svg-scroll-recipes/SKILL.md`, a thin index written for this marketplace.
+- Modifications:
+  - `svg-animation.md`: the stroke-draw recipe now sets `pathLength="1"` on the path (explicit step, HTML snippet, CSS comment) so `stroke-dasharray: 1px 1.1px` is correct; the `pathLength="100"` bullet was reworded to match. Why: without it the dash does not equal the path length.
+  - `svg-animation.md`: standard note "Outside the platform: needs the project owner's approval (weight, licence, platform alternative)" inserted before 4 Motion code blocks and after the flubber sentence; pointer to `performance-deep-dive.md` replaced by "(with an IntersectionObserver)".
+  - `clip-path-techniques.md`: "hardware-accelerated" claims (intro and comparison slider) replaced by: compositing of clip-path animations is not reliable across browsers, measure before relying on it, prefer transform/opacity when possible.
+  - `scroll-animations.md`: same standard note after the Motion `useScroll` item; "still not Baseline" reworded to "was not Baseline when written (re-check current support)".
+  - `debugging-symptoms.md`: removed pointers to `performance-deep-dive.md` (two places) and `component-patterns.md` (replaced by `interpolate-size` / `calc-size()` hint).

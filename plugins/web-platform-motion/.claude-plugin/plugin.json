@@ -1,7 +1,9 @@
 {
   "name": "web-platform-motion",
-  "version": "1.0.0",
-  "description": "Platform-first motion and visuals: Chrome modern-web-guidance guides plus genjutsu css-native and canvas-generative.",
-  "author": { "name": "design-craft maintainers" },
+  "version": "1.1.0",
+  "description": "Platform-first motion and visuals: Chrome modern-web-guidance guides, genjutsu css-native and canvas-generative, mblode SVG/scroll/clip-path recipes.",
+  "author": {
+    "name": "design-craft maintainers"
+  },
   "license": "Apache-2.0 AND MIT"
 }

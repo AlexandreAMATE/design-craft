@@ -30,3 +30,6 @@ Skills: ask-emil, ask-sonner, animate-expo, apple-design, break-ui, find-animati
 - `skills/review-animations/SKILL.md`: added a sentence: prefer platform fixes, never recommend adding a library without owner approval.
 
 No course, site or product promotion was found in the kept files beyond mentions of the Sonner/Vaul libraries as technical examples (kept).
+
+## verify-motion (original, MIT)
+`skills/verify-motion/SKILL.md` has no upstream. It was written for this marketplace, under the MIT licence of this plugin. Pure markdown, no script: a procedure for an agent with browser tools (Playwright MCP) to verify CSS/WAAPI animations by pausing, seeking and screenshotting. Project tokens and art direction take precedence over numeric defaults.

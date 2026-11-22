@@ -1,7 +1,9 @@
 {
   "name": "motion-craft",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "UI animation craft skills (trimmed copy of emilkowalski/skills).",
-  "author": { "name": "design-craft maintainers" },
+  "author": {
+    "name": "design-craft maintainers"
+  },
   "license": "MIT"
 }
