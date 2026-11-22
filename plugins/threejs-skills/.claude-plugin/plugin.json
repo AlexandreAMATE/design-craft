@@ -1,0 +1,7 @@
+{
+  "name": "threejs-skills",
+  "version": "1.0.0",
+  "description": "three.js skills (copy of CloudAI-X/threejs-skills).",
+  "author": { "name": "design-craft maintainers" },
+  "license": "MIT"
+}
