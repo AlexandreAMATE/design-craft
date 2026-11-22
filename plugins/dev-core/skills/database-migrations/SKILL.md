@@ -31,7 +31,7 @@ Before applying any migration:
 
 - [ ] Migration has both UP and DOWN (or is explicitly marked irreversible)
 - [ ] No full table locks on large tables (use concurrent operations)
-- [ ] New columns have defaults or are nullable (never add NOT NULL without default)
+- [ ] New columns are nullable or have a constant DEFAULT (`ADD COLUMN ... NOT NULL` without a default fails on a non-empty table)
 - [ ] Indexes created concurrently (not inline with CREATE TABLE for existing tables)
 - [ ] Data backfill is a separate migration from schema change
 - [ ] Tested against a copy of production data
@@ -48,9 +48,10 @@ ALTER TABLE users ADD COLUMN avatar_url TEXT;
 -- GOOD: Column with default (Postgres 11+ is instant, no rewrite)
 ALTER TABLE users ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT true;
 
--- BAD: NOT NULL without default on existing table (requires full rewrite)
+-- BAD: NOT NULL without default on a non-empty table: the statement fails
 ALTER TABLE users ADD COLUMN role TEXT NOT NULL;
--- This locks the table and rewrites every row
+-- Instead: add the column nullable, backfill in batches, then ALTER COLUMN ... SET NOT NULL
+-- (or add it with a constant DEFAULT, as above)
 ```
 
 ### Adding an Index Without Downtime
@@ -62,8 +63,9 @@ CREATE INDEX idx_users_email ON users (email);
 -- GOOD: Non-blocking, allows concurrent writes
 CREATE INDEX CONCURRENTLY idx_users_email ON users (email);
 
--- Note: CONCURRENTLY cannot run inside a transaction block
--- Most migration tools need special handling for this
+-- Note: CONCURRENTLY cannot run inside a transaction block. Put it in its own
+-- migration and run that file outside a transaction (disable the runner's
+-- per-migration transaction for it).
 ```
 
 ### Renaming a Column (Zero-Downtime)
@@ -91,9 +93,6 @@ ALTER TABLE users DROP COLUMN username;
 -- Step 2: Deploy application without the column reference
 -- Step 3: Drop column in next migration
 ALTER TABLE orders DROP COLUMN legacy_status;
-
--- For Django: use SeparateDatabaseAndState to remove from model
--- without generating DROP COLUMN (then drop in next migration)
 ```
 
 ### Large Data Migrations
@@ -102,27 +101,17 @@ ALTER TABLE orders DROP COLUMN legacy_status;
 -- BAD: Updates all rows in one transaction (locks table)
 UPDATE users SET normalized_email = LOWER(email);
 
--- GOOD: Batch update with progress
-DO $$
-DECLARE
-  batch_size INT := 10000;
-  rows_updated INT;
-BEGIN
-  LOOP
-    UPDATE users
-    SET normalized_email = LOWER(email)
-    WHERE id IN (
-      SELECT id FROM users
-      WHERE normalized_email IS NULL
-      LIMIT batch_size
-      FOR UPDATE SKIP LOCKED
-    );
-    GET DIAGNOSTICS rows_updated = ROW_COUNT;
-    RAISE NOTICE 'Updated % rows', rows_updated;
-    EXIT WHEN rows_updated = 0;
-    COMMIT;
-  END LOOP;
-END $$;
+-- GOOD: one batch per statement, repeated by the migration runner or a script
+-- OUTSIDE a transaction block (each batch commits on its own) until it updates 0 rows.
+-- Do not put COMMIT inside a DO block.
+UPDATE users
+SET normalized_email = LOWER(email)
+WHERE id IN (
+  SELECT id FROM users
+  WHERE normalized_email IS NULL
+  LIMIT 10000
+  FOR UPDATE SKIP LOCKED
+);
 ```
 
 ## Prisma (TypeScript/Node.js)
@@ -146,6 +135,8 @@ npx prisma generate
 ```
 
 ### Schema Example
+
+> Illustrative. In a Postgres schema prefer `timestamptz`, `text`, and identity or uuid ids, consistent with `postgres-patterns`.
 
 ```prisma
 model User {
@@ -198,6 +189,8 @@ npx drizzle-kit push
 
 ### Schema Example
 
+> Illustrative; `timestamptz` shown, consistent with `postgres-patterns`.
+
 ```typescript
 import { pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 
@@ -206,193 +199,9 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   name: text("name"),
   isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
-```
-
-## Kysely (TypeScript/Node.js)
-
-### Workflow (kysely-ctl)
-
-```bash
-# Initialize config file (kysely.config.ts)
-kysely init
-
-# Create a new migration file
-kysely migrate make add_user_avatar
-
-# Apply all pending migrations
-kysely migrate latest
-
-# Rollback last migration
-kysely migrate down
-
-# Show migration status
-kysely migrate list
-```
-
-### Migration File
-
-```typescript
-// migrations/2024_01_15_001_create_user_profile.ts
-import { type Kysely, sql } from 'kysely'
-
-// IMPORTANT: Always use Kysely<any>, not your typed DB interface.
-// Migrations are frozen in time and must not depend on current schema types.
-export async function up(db: Kysely<any>): Promise<void> {
-  await db.schema
-    .createTable('user_profile')
-    .addColumn('id', 'serial', (col) => col.primaryKey())
-    .addColumn('email', 'varchar(255)', (col) => col.notNull().unique())
-    .addColumn('avatar_url', 'text')
-    .addColumn('created_at', 'timestamp', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .execute()
-
-  await db.schema
-    .createIndex('idx_user_profile_avatar')
-    .on('user_profile')
-    .column('avatar_url')
-    .execute()
-}
-
-export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable('user_profile').execute()
-}
-```
-
-### Programmatic Migrator
-
-```typescript
-import { Migrator, FileMigrationProvider } from 'kysely'
-import { promises as fs } from 'fs'
-import * as path from 'path'
-// ESM only — CJS can use __dirname directly
-import { fileURLToPath } from 'url'
-const migrationFolder = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  './migrations',
-)
-
-// `db` is your Kysely<any> database instance
-const migrator = new Migrator({
-  db,
-  provider: new FileMigrationProvider({
-    fs,
-    path,
-    migrationFolder,
-  }),
-  // WARNING: Only enable in development. Disables timestamp-ordering
-  // validation, which can cause schema drift between environments.
-  // allowUnorderedMigrations: true,
-})
-
-const { error, results } = await migrator.migrateToLatest()
-
-results?.forEach((it) => {
-  if (it.status === 'Success') {
-    console.log(`migration "${it.migrationName}" executed successfully`)
-  } else if (it.status === 'Error') {
-    console.error(`failed to execute migration "${it.migrationName}"`)
-  }
-})
-
-if (error) {
-  console.error('migration failed', error)
-  process.exit(1)
-}
-```
-
-## Django (Python)
-
-### Workflow
-
-```bash
-# Generate migration from model changes
-python manage.py makemigrations
-
-# Apply migrations
-python manage.py migrate
-
-# Show migration status
-python manage.py showmigrations
-
-# Generate empty migration for custom SQL
-python manage.py makemigrations --empty app_name -n description
-```
-
-### Data Migration
-
-```python
-from django.db import migrations
-
-def backfill_display_names(apps, schema_editor):
-    User = apps.get_model("accounts", "User")
-    batch_size = 5000
-    users = User.objects.filter(display_name="")
-    while users.exists():
-        batch = list(users[:batch_size])
-        for user in batch:
-            user.display_name = user.username
-        User.objects.bulk_update(batch, ["display_name"], batch_size=batch_size)
-
-def reverse_backfill(apps, schema_editor):
-    pass  # Data migration, no reverse needed
-
-class Migration(migrations.Migration):
-    dependencies = [("accounts", "0015_add_display_name")]
-
-    operations = [
-        migrations.RunPython(backfill_display_names, reverse_backfill),
-    ]
-```
-
-### SeparateDatabaseAndState
-
-Remove a column from the Django model without dropping it from the database immediately:
-
-```python
-class Migration(migrations.Migration):
-    operations = [
-        migrations.SeparateDatabaseAndState(
-            state_operations=[
-                migrations.RemoveField(model_name="user", name="legacy_field"),
-            ],
-            database_operations=[],  # Don't touch the DB yet
-        ),
-    ]
-```
-
-## golang-migrate (Go)
-
-### Workflow
-
-```bash
-# Create migration pair
-migrate create -ext sql -dir migrations -seq add_user_avatar
-
-# Apply all pending migrations
-migrate -path migrations -database "$DATABASE_URL" up
-
-# Rollback last migration
-migrate -path migrations -database "$DATABASE_URL" down 1
-
-# Force version (fix dirty state)
-migrate -path migrations -database "$DATABASE_URL" force VERSION
-```
-
-### Migration Files
-
-```sql
--- migrations/000003_add_user_avatar.up.sql
-ALTER TABLE users ADD COLUMN avatar_url TEXT;
-CREATE INDEX CONCURRENTLY idx_users_avatar ON users (avatar_url) WHERE avatar_url IS NOT NULL;
-
--- migrations/000003_add_user_avatar.down.sql
-DROP INDEX IF EXISTS idx_users_avatar;
-ALTER TABLE users DROP COLUMN IF EXISTS avatar_url;
 ```
 
 ## Zero-Downtime Migration Strategy
@@ -430,7 +239,7 @@ Day 7: Migration drops old status column
 |-------------|-------------|-----------------|
 | Manual SQL in production | No audit trail, unrepeatable | Always use migration files |
 | Editing deployed migrations | Causes drift between environments | Create new migration instead |
-| NOT NULL without default | Locks table, rewrites all rows | Add nullable, backfill, then add constraint |
+| NOT NULL without default | Fails on a non-empty table | Add nullable, backfill in batches, then SET NOT NULL (or a constant DEFAULT) |
 | Inline index on large table | Blocks writes during build | CREATE INDEX CONCURRENTLY |
 | Schema + data in one migration | Hard to rollback, long transactions | Separate migrations |
 | Dropping column before removing code | Application errors on missing column | Remove code first, drop column next deploy |

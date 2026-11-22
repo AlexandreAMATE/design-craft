@@ -248,7 +248,9 @@ export function Accordion({ title, children }: { title: string; children: React.
 
 Every interactive element must be reachable and operable by keyboard alone.
 
-### Custom Dropdown
+### Custom Dropdown (select-only combobox)
+
+The input is the combobox; the listbox is its sibling, never its child. Prefer a native `<select>` when it is enough.
 
 ```tsx
 export function Dropdown({ options, onSelect }: { options: string[]; onSelect: (value: string) => void }) {
@@ -262,6 +264,7 @@ export function Dropdown({ options, onSelect }: { options: string[]; onSelect: (
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
+        setIsOpen(true);
         setActiveIndex(i => Math.min(i + 1, options.length - 1));
         break;
       case 'ArrowUp':
@@ -281,33 +284,33 @@ export function Dropdown({ options, onSelect }: { options: string[]; onSelect: (
   };
 
   return (
-    <div
-      role="combobox"
-      aria-expanded={isOpen}
-      aria-haspopup="listbox"
-      aria-controls={listId}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onClick={() => setIsOpen(prev => !prev)}
-    >
-      <span>{options[activeIndex]}</span>
-      {isOpen && (
-        <ul id={listId} role="listbox">
-          {options.map((option, index) => (
-            <li
-              key={option}
-              role="option"
-              aria-selected={index === activeIndex}
-              onClick={() => {
-                onSelect(option);
-                setIsOpen(false);
-              }}
-            >
-              {option}
-            </li>
-          ))}
-        </ul>
-      )}
+    <div>
+      <input
+        role="combobox"
+        readOnly
+        value={options[activeIndex]}
+        aria-expanded={isOpen}
+        aria-controls={listId}
+        aria-activedescendant={isOpen ? `${listId}-${activeIndex}` : undefined}
+        onKeyDown={handleKeyDown}
+        onClick={() => setIsOpen(prev => !prev)}
+      />
+      <ul id={listId} role="listbox" hidden={!isOpen}>
+        {options.map((option, index) => (
+          <li
+            key={option}
+            id={`${listId}-${index}`}
+            role="option"
+            aria-selected={index === activeIndex}
+            onClick={() => {
+              onSelect(option);
+              setIsOpen(false);
+            }}
+          >
+            {option}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -317,37 +320,32 @@ export function Dropdown({ options, onSelect }: { options: string[]; onSelect: (
 
 Focus must move logically when UI state changes — especially for modals and route transitions.
 
-### Modal Focus Restoration
+### Modal Dialog
 
-> This example covers initial focus and restoration. For a full focus trap (Tab/Shift+Tab cycling within the modal), use a library like [`focus-trap-react`](https://github.com/focus-trap/focus-trap-react) which handles edge cases like dynamic content and nested portals.
+Prefer the native `<dialog>` opened with `showModal()`: the browser provides the focus trap, Escape to close, inert background and focus restoration.
 
 ```tsx
 export function Modal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      // Save currently focused element and move focus into modal
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      modalRef.current?.focus();
-    } else {
-      // Restore focus to the element that opened the modal
-      previousFocusRef.current?.focus();
-    }
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (isOpen && !dialog.open) dialog.showModal();
+    if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="modal-title" tabIndex={-1} onKeyDown={e => e.key === 'Escape' && onClose()}>
+    <dialog ref={ref} aria-labelledby="modal-title" onClose={onClose}>
       <h2 id="modal-title">{title}</h2>
       {children}
       <button onClick={onClose}>Close</button>
-    </div>
+    </dialog>
   );
 }
 ```
+
+Only when a native `<dialog>` is not possible, a focus-trap library such as `focus-trap-react` can handle dynamic content and nested portals: it is outside the platform and needs the project owner's approval (weight, licence, platform alternative).
 
 ## Images and Icons
 
@@ -434,7 +432,7 @@ Before submitting any interactive component for review:
 - [ ] No `onClick` on `<div>` or `<span>` without `role`, `tabIndex`, and `onKeyDown`
 - [ ] Icon-only buttons have `aria-label`
 - [ ] Decorative images use `alt=""` and `aria-hidden="true"`
-- [ ] Modals restore focus on close (for full focus trapping with Tab/Shift+Tab cycling, use a library like `focus-trap-react`)
+- [ ] Modals restore focus on close (use a native `<dialog>` with `showModal()` for focus trapping; a library needs the project owner's approval)
 - [ ] Dynamic content updates use `aria-live`
 - [ ] `prefers-reduced-motion` is respected for animations
 
@@ -442,4 +440,4 @@ Before submitting any interactive component for review:
 
 - `frontend-patterns` — general React component and state patterns
 - `design-system` — design token and component consistency
-- `motion-ui` — animation patterns with accessibility considerations
+- the `motion-craft` plugin — animation patterns and reduced motion

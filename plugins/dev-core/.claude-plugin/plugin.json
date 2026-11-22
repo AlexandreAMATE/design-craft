@@ -1,7 +1,9 @@
 {
   "name": "dev-core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Trimmed, sanitised ECC agents and skills for a TypeScript/Node/Postgres/React stack, plus systematic-debugging (superpowers) and the interface-method skill.",
-  "author": { "name": "design-craft maintainers" },
+  "author": {
+    "name": "design-craft maintainers"
+  },
   "license": "MIT"
 }

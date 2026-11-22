@@ -121,6 +121,8 @@ ORDER BY n_dead_tup DESC;
 
 ### Configuration Template
 
+> Server admin only, and only with the project owner's approval: these `ALTER SYSTEM` settings change the server. `max_connections` requires a restart (`pg_reload_conf()` is not enough).
+
 ```sql
 -- Connection limits (adjust for RAM)
 ALTER SYSTEM SET max_connections = 100;
@@ -142,7 +144,6 @@ SELECT pg_reload_conf();
 ## Related
 
 - Agent: `database-reviewer` - Full database review workflow
-- Skill: `backend-patterns` - API and backend patterns
 
 ---
 

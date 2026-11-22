@@ -40,7 +40,7 @@ Examples: monorepo vs polyrepo; ship now vs hold for polish; feature flag vs ful
 
 ## Workflow
 
-1. **Extract the real question.** What are we deciding, which constraints matter, what counts as success? If the question is vague, ask one clarifying question first.
+1. **Extract the real question.** What are we deciding, which constraints matter, what counts as success? If the question is vague, ask one clarifying question first. When run inside a subagent, do not ask a clarifying question: state the assumption you made and continue.
 2. **Gather only the necessary context** (relevant files, snippets, metrics). Skip repo snippets for strategic questions.
 3. **Write your Architect position first**: initial position, the three strongest reasons, the main risk. Do this before the other lenses so the synthesis does not just mirror them.
 4. **Write the other three lenses one at a time**, each as if you knew only the question and the compact context: Position (1-2 sentences), Reasoning (3 bullets), Risk, and one Surprise the others may miss. Skeptic challenges the framing and proposes the simplest credible alternative; Pragmatist optimises for speed and real-world execution; Critic surfaces downside risk and reasons the plan could fail. Be direct, under 150 words each.
@@ -69,5 +69,7 @@ Do not write notes to files from this skill; record a decision only where the pr
 - using council for code review or plain implementation work
 - hiding disagreement in the final verdict
 - persisting every decision regardless of importance
+
+The four lenses are written by one model, so the caller should treat agreement between lenses as weak evidence.
 
 The value is not unanimity. The value is making the disagreement legible before choosing.

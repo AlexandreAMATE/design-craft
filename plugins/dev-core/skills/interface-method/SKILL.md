@@ -6,11 +6,11 @@ description: Méthode du propriétaire pour toute tâche qui touche un composant
 # Méthode d'interface
 
 Les tokens et la direction artistique de la fiche projet priment sur toute valeur chiffrée d'un skill.
-Palier gros : les quatre temps. Palier moyen : temps 2 et 4. Palier trivial : test ciblé seulement.
+Paliers (définis dans les consignes globales) : gros = les quatre temps ; moyen = temps 2 et 4 ; trivial = test ciblé seulement.
 
 ## 1. Interview frontend (avant tout composant ou style nouveau)
 Tu proposes d'abord ; tu ne me demandes pas de partir d'une page blanche.
-1. **Audit** : relève les tokens, composants maison, animations et la direction artistique existants (`dev-core:design-system` en mode audit) pour ne proposer que ce qui s'y raccorde.
+1. **Audit** : relève les tokens, composants maison, animations et la direction artistique existants (`dev-core:design-system`, qui en dresse l'inventaire) pour ne proposer que ce qui s'y raccorde.
 2. **Proposition** avec `frontend-design:frontend-design` : l'intention en une phrase, puis deux ou trois pistes réellement différentes, dont une plus audacieuse. Pour chacune : composition, typographie, couleurs, densité, mouvement (quoi bouge, quand, pourquoi, en chiffres) et tous les états (vide, chargement, erreur, survol, focus, désactivé). Dis laquelle tu recommandes et ce qui la distingue d'une interface générique.
 3. **Montrer plutôt que décrire** : dès que le choix est visuel, une maquette HTML autonome construite avec les tokens du projet (`playground:playground`, gabarit `design-playground`). Donne-moi le chemin du fichier à ouvrir.
 4. **Questions** : seulement ce que la proposition ne peut pas trancher sans moi (ton, références aimées ou rejetées, niveau d'audace, priorités), en boîte de dialogue.
@@ -37,7 +37,7 @@ Choisis l'outil le plus léger qui suffit : CSS et tokens ; puis Web Animations 
 ## Règles de mouvement
 - Toute durée, courbe ou ressort passe par les tokens du projet ; aucune valeur en dur ; une seule famille de courbes dans l'app. Le mouvement s'écrit en chiffres (durée, courbe, états), jamais en adjectifs.
 - Interactions sous 300 ms ; les durées longues sont réservées aux moments rares.
-- Par défaut `transform` et `opacity` ; `clip-path`, `stroke-dashoffset` et View Transitions admis pour les moments rares, après mesure.
+- Par défaut `transform` et `opacity`. `clip-path` et `stroke-dashoffset` sont admis pour les moments rares, après mesure. Les View Transitions servent aux changements de vue ou d'état d'ensemble, pas aux micro-interactions.
 - Rien sur ce qu'on fait cent fois par jour (menus, raccourcis clavier, frappe). Une animation ne bloque jamais une action et s'interrompt proprement.
 - La sortie est plus courte que l'entrée ; rien ne part d'une échelle 0 ; un popover grandit depuis son déclencheur.
 - Mouvement réduit : plus de déplacement décoratif ; fondus et changements instantanés restent.

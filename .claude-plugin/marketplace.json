@@ -36,8 +36,8 @@
     {
       "name": "dev-core",
       "source": "./plugins/dev-core",
-      "description": "Trimmed, sanitised ECC agents and skills (React, Node, Postgres), systematic-debugging, and the interface-method skill.",
-      "version": "1.0.0",
+      "description": "Trimmed, sanitised ECC agents and skills (React, Postgres, testing), systematic-debugging, and the interface-method skill.",
+      "version": "1.1.0",
       "license": "MIT"
     }
   ]

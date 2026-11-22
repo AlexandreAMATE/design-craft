@@ -131,7 +131,11 @@ Boundaries:
 
 ## Forms
 
-### React 19 form actions (preferred for new code)
+### React 19 form actions
+
+React 19 only; check the project's React version (this stack may be on React 18, where `useActionState` does not exist: use a controlled form with `onSubmit`).
+
+The client side, with the action passed in or imported from its own module:
 
 ```tsx
 "use client";
@@ -139,15 +143,7 @@ import { useActionState } from "react";
 
 const initial = { error: null as string | null };
 
-async function updateUserAction(_prev: typeof initial, formData: FormData) {
-  "use server";
-  const parsed = UserSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: "Invalid input" };
-  await db.user.update({ where: { id: parsed.data.id }, data: parsed.data });
-  return { error: null };
-}
-
-export function UserForm() {
+export function UserForm({ updateUserAction }: { updateUserAction: (prev: typeof initial, formData: FormData) => Promise<typeof initial> }) {
   const [state, formAction, pending] = useActionState(updateUserAction, initial);
   return (
     <form action={formAction}>
@@ -156,6 +152,20 @@ export function UserForm() {
       {state.error && <p role="alert">{state.error}</p>}
     </form>
   );
+}
+```
+
+Only if the project uses Next.js: the action lives in a separate server file, never inline in a `"use client"` file.
+
+```ts
+// actions.ts
+"use server";
+
+export async function updateUserAction(_prev: { error: string | null }, formData: FormData) {
+  const parsed = UserSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Invalid input" };
+  await db.user.update({ where: { id: parsed.data.id }, data: parsed.data });
+  return { error: null };
 }
 ```
 
@@ -297,6 +307,8 @@ function SearchBox() {
 ```
 
 ### Optimistic UI with React 19 `useOptimistic`
+
+React 19 only; check the project's React version.
 
 ```tsx
 "use client";

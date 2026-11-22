@@ -33,7 +33,7 @@ tests/
 ## Page Object Model (POM)
 
 ```typescript
-import { Page, Locator } from '@playwright/test'
+import { Page, Locator, expect } from '@playwright/test'
 
 export class ItemsPage {
   readonly page: Page
@@ -50,13 +50,13 @@ export class ItemsPage {
 
   async goto() {
     await this.page.goto('/items')
-    await this.page.waitForLoadState('networkidle')
+    await expect(this.itemCards.first()).toBeVisible()
   }
 
   async search(query: string) {
     await this.searchInput.fill(query)
     await this.page.waitForResponse(resp => resp.url().includes('/api/search'))
-    await this.page.waitForLoadState('networkidle')
+    await expect(this.itemCards.first()).toBeVisible()
   }
 
   async getItemCount() {
@@ -156,8 +156,8 @@ test('conditional skip', async ({ page }) => {
 ### Identify Flakiness
 
 ```bash
-npx playwright test tests/search.spec.ts --repeat-each=10
-npx playwright test tests/search.spec.ts --retries=3
+npx --no-install playwright test tests/search.spec.ts --repeat-each=10   # or the project's E2E script
+npx --no-install playwright test tests/search.spec.ts --retries=3
 ```
 
 ### Common Causes & Fixes
@@ -186,8 +186,7 @@ await page.waitForResponse(resp => resp.url().includes('/api/data'))
 await page.click('[data-testid="menu-item"]')
 
 // Good: wait for stability
-await page.locator('[data-testid="menu-item"]').waitFor({ state: 'visible' })
-await page.waitForLoadState('networkidle')
+await expect(page.locator('[data-testid="menu-item"]')).toBeVisible()
 await page.locator('[data-testid="menu-item"]').click()
 ```
 
@@ -204,13 +203,9 @@ await page.locator('[data-testid="chart"]').screenshot({ path: 'artifacts/chart.
 ### Traces
 
 ```typescript
-await browser.startTracing(page, {
-  path: 'artifacts/trace.json',
-  screenshots: true,
-  snapshots: true,
-})
+await context.tracing.start({ screenshots: true, snapshots: true })
 // ... test actions ...
-await browser.stopTracing()
+await context.tracing.stop({ path: 'trace.zip' })
 ```
 
 ### Video
@@ -219,7 +214,6 @@ await browser.stopTracing()
 // In playwright.config.ts
 use: {
   video: 'retain-on-failure',
-  videosPath: 'artifacts/videos/'
 }
 ```
 
@@ -254,28 +248,3 @@ Run the project's own E2E command in the project's CI; keep Playwright's report 
 - Traces: artifacts/*.zip
 ```
 
-## Financial / Critical Flow Testing
-
-```typescript
-test('trade execution', async ({ page }) => {
-  // Skip on production — real money
-  test.skip(process.env.NODE_ENV === 'production', 'Skip on production')
-
-  await page.goto('/markets/test-market')
-  await page.locator('[data-testid="position-yes"]').click()
-  await page.locator('[data-testid="trade-amount"]').fill('1.0')
-
-  // Verify preview
-  const preview = page.locator('[data-testid="trade-preview"]')
-  await expect(preview).toContainText('1.0')
-
-  // Confirm and wait for blockchain
-  await page.locator('[data-testid="confirm-trade"]').click()
-  await page.waitForResponse(
-    resp => resp.url().includes('/api/trade') && resp.status() === 200,
-    { timeout: 30000 }
-  )
-
-  await expect(page.locator('[data-testid="trade-success"]')).toBeVisible()
-})
-```

@@ -1,11 +1,11 @@
 ---
 name: design-system
-description: "Audits an existing UI codebase for visual consistency (colors, type, spacing, components) with scored findings at file:line. Use before a redesign or when reviewing styling changes."
+description: "Inventory and audit an existing design system: tokens, house components, visual consistency."
 metadata:
   origin: ECC
 ---
 
-# Design System - Visual Audit
+# Design System - Inventory and Audit
 
 Audit an existing codebase for visual consistency. This skill reads code and, if a dev server is already running and browser tools are available, the rendered UI. It generates nothing with external tools or services.
 
@@ -14,11 +14,10 @@ Audit an existing codebase for visual consistency. This skill reads code and, if
 - Auditing an existing codebase for visual consistency
 - Before a redesign, to understand what exists
 - When the UI looks "off" but you cannot pinpoint why
-- Reviewing PRs that touch styling
 
 ## Visual Audit
 
-Scan CSS/Tailwind/styled-components for existing patterns first: colors, typography, spacing, border-radius, shadows, breakpoints. Then score the UI across 10 dimensions (0-10 each):
+Start by listing existing tokens, house components and animations with their paths. Then scan CSS/Tailwind/styled-components for existing patterns first: colors, typography, spacing, border-radius, shadows, breakpoints. Then score the UI across 10 dimensions (0-10 each):
 
 ```
 1. Color consistency - are you using your palette or random hex values?
