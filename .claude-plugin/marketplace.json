@@ -32,6 +32,13 @@
       "description": "UI polish review skills: better-ui, better-layout, better-typography, better-interface, interface-review (MIT, from jakubkrehel/skills).",
       "version": "1.1.0",
       "license": "MIT"
+    },
+    {
+      "name": "dev-core",
+      "source": "./plugins/dev-core",
+      "description": "Trimmed, sanitised ECC agents and skills (React, Node, Postgres), systematic-debugging, and the interface-method skill.",
+      "version": "1.0.0",
+      "license": "MIT"
     }
   ]
 }
