@@ -3,6 +3,8 @@ name: threejs-lighting
 description: "Light types and physical units, shadow maps, HDR environment lighting, light probes, and lighting performance, on WebGL or with WebGPU and TSL. Use when adding or tuning lights, fixing shadow acne, setting up image-based lighting, or dimming an environment map."
 ---
 
+> API names target three r186; confirm against the installed three version's docs before use.
+
 # Three.js Lighting
 
 Targets three.js r186. Examples use WebGLRenderer; the WebGPU and TSL section uses WebGPURenderer.

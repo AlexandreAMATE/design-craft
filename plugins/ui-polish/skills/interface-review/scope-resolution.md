@@ -4,7 +4,7 @@ How a review target becomes a file list, and the traps that fail quietly and lea
 
 ## Default branch
 
-Try `refs/remotes/origin/HEAD`, then `gh repo view --json defaultBranchRef`. If the ref is missing, ask the remote with `git remote set-head origin --auto` rather than guessing. It needs the network and writes only a ref under `.git`, so it is permitted; note it in Verification. With no remote at all, fall back to a local `main` or `master` and state which base you assumed.
+Try `refs/remotes/origin/HEAD`, then a local `main` or `master`, and state which base you assumed. If none of them exists, ask the user for the base. Never contact the remote to find it.
 
 ## Targets
 
@@ -12,7 +12,7 @@ Accepted targets are `working`, `staged`, `branch`, `pr <n>`, a bare `<ref>` and
 
 - `working` is every uncommitted change against `HEAD`, staged or not, plus untracked files.
 - `staged` is the index against `HEAD`, from `git diff --cached`. Read its files with `git show :path/to/file`.
-- `branch` is the merge base with the default branch to `HEAD`, plus uncommitted changes.
+- `branch` is the merge base with the local default branch to `HEAD`, plus uncommitted changes.
 - A bare `<ref>` is everything since that ref, up to the current checkout with its uncommitted changes.
 
 Diff a branch against the **merge base**, with three dots. Two dots reports every upstream commit that landed on the base branch as part of the change.
@@ -23,17 +23,17 @@ But use the dots the user wrote when they wrote a range. `<a>..<b>` compares the
 
 ## Pull requests
 
-Fetch the head into a remote-tracking ref, `git fetch origin "pull/<n>/head:refs/remotes/pr/<n>"`, and review it in place. This works for forks, which `origin/<branch>` does not.
+A pull request can be reviewed only through refs already present locally: a local branch, or a remote-tracking ref such as `refs/remotes/pr/<n>` the user has already fetched. If the head ref is missing, ask the user for the branch or ref; do not fetch it, and do not call `gh`.
 
-Diff against the pull request's own base, never the default branch by assumption. Read it from `gh pr view <n> --json baseRefName,baseRefOid` and fetch it if it is not local. A pull request into `release/2.0` diffed against `main` picks up every commit between the two.
+Diff against the pull request's own base, never the default branch by assumption. Ask the user for the base ref if it is not obvious from local refs. A pull request into `release/2.0` diffed against `main` picks up every commit between the two.
 
 Read files at the head ref with `git show refs/remotes/pr/<n>:path/to/file`. Never open the working-tree copy, which is a different revision.
 
-`gh pr diff <n>` is a fine shortcut for the patch text. It gives no way to read unchanged context or expand to consumers, so fetch the ref as well.
+Read the patch with `git diff` between the base and head refs. It also gives unchanged context through `git show`.
 
-**Citations.** Line numbers from a fetched ref need not match the working tree. Cite against the head ref and declare that ref and its SHA in the scope block so the numbers resolve.
+**Citations.** Line numbers from a head ref other than the checkout need not match the working tree. Cite against the head ref and declare that ref and its SHA in the scope block so the numbers resolve.
 
-**Intent.** The `title` and `body` from `gh pr view` are the stated intent for **Hold the change to its stated intent**. Add the commit subjects when the body is empty.
+**Intent.** The pull request `title` and `body` are not available offline. Use the commit subjects (`git log`) as the stated intent for **Hold the change to its stated intent**, or ask the user.
 
 ## Awkward repository states
 
@@ -41,15 +41,15 @@ Three worth handling. Everything else fails loudly at `merge-base`: unrelated hi
 
 **Detached HEAD.** Use the merge base against the default branch and name the SHA, not a branch, in the scope block.
 
-**Shallow clone**, the CI default, where `merge-base` returns nothing. Fetch `--deepen=50`, retry, then `--deepen=200`, then report the scope as unresolvable. Deepening writes to `.git` and not to the working tree, so it is permitted; note it in Verification.
+**Shallow clone**, the CI default, where `merge-base` returns nothing. Do not deepen it: report the scope as unresolvable and ask the user for a base ref that exists locally.
 
 **Mid-rebase or mid-merge**, the one that does not fail loudly. `git diff` succeeds and returns something that is not the change, so the review looks fine and is wrong. Detect it with `git rev-parse --git-path` against `rebase-merge`, `rebase-apply`, `MERGE_HEAD` and `CHERRY_PICK_HEAD`. Do not test `.git/` paths directly, because they are not directories inside a linked worktree. Stop and say the tree is mid-operation.
 
 ## Nothing to review
 
-The tree is clean and `HEAD` is not ahead of the merge base. Gather the facts before asking, so the offer is accurate rather than a guess. They are the current branch, the count ahead of the base, the last commit's SHA and subject and any open pull request from `gh pr status`.
+The tree is clean and `HEAD` is not ahead of the merge base. Gather the facts before asking, so the offer is accurate rather than a guess. They are the current branch, the count ahead of the base, and the last commit's SHA and subject, all from local `git`.
 
-`gh pr status` succeeds when no pull request is open. It omits `currentBranch`, so an empty result is an answer, not an error. It fails outright without `gh`, without authentication and on a repository with no GitHub remote. Treat any failure as "no pull request found", say so and offer the remaining routes rather than stopping.
+Do not look for open pull requests: that needs `gh` and the network. Offer the remaining routes (a ref or range the user names) instead.
 
 ## Renames
 

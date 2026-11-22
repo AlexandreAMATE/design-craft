@@ -33,3 +33,11 @@ No course, site or product promotion was found in the kept files beyond mentions
 
 ## verify-motion (original, MIT)
 `skills/verify-motion/SKILL.md` has no upstream. It was written for this marketplace, under the MIT licence of this plugin. Pure markdown, no script: a procedure for an agent with browser tools (Playwright MCP) to verify CSS/WAAPI animations by pausing, seeking and screenshotting. Project tokens and art direction take precedence over numeric defaults.
+
+## Review-fix changes (round 3)
+- Original files (Copyright (c) 2026 design-craft maintainers, MIT): `skills/verify-motion/SKILL.md`. See `NOTICE-design-craft.md`.
+- `skills/verify-motion/SKILL.md`: rewritten and tested in headless Chromium 156 (probe, seek, release, retarget run without error; finite animations seeked, infinite spinner skipped, `::after` labelled, per-keyframe easing visible). Infinite and scroll-driven animations are listed but not seeked; shadow roots probed separately; reduced-motion rule allows drag tracking and opacity/colour changes; the one-frame wait races rAF against a 50 ms timer (rAF stalled in headless).
+- `skills/review-animations/SKILL.md`: removed `disable-model-invocation: true` (the owner's workflow invokes it from the agent). Upstream declared it; this is a deliberate change.
+- `skills/{emil-design-eng,choreograph,gestures}/SKILL.md`: added the precedence line "Project motion tokens and art direction take precedence over every number in this skill; where this skill and `animate` disagree on UI timing or easing, `animate` wins."
+- `skills/emil-design-eng/SKILL.md`: description rewritten (interaction-detail reference); the "Review Format (Required)" rule is now prefixed "Unless the project or an active review skill defines a format,"; easing.dev / easings.co pointer replaced by "Use the curves listed here or the project's easing tokens."
+- `skills/animate/SKILL.md` and `skills/review-animations/STANDARDS.md`: same easing pointer replacement.

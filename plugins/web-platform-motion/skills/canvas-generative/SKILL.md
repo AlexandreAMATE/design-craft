@@ -3,6 +3,8 @@ name: canvas-generative
 description: "Algorithmic and generative art with Canvas 2D - particles, flow fields, noise, fractals, L-systems."
 ---
 
+> Project motion tokens and art direction take precedence over every number in this skill; where this skill and `animate` disagree on UI timing or easing, `animate` wins.
+
 > **Version-sensitive.** Every API name, SDK gate and browser-support claim below was
 > verified on **2026-09-08** against primary sources. If that date is old, re-verify
 > before acting on a version number.

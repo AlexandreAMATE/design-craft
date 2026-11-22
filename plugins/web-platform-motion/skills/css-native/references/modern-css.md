@@ -95,7 +95,7 @@ This kills one of the last real reasons to pull in a JS animation library: the c
 ```css
 @supports (animation-delay: calc(sibling-index() * 1ms)) {
   li {
-    animation: rise 400ms var(--ease-out-expo) both;
+    animation: rise 400ms var(--ease-out-expo) both; /* >300ms: page-level or scroll-linked only, not component interactions */
     animation-delay: calc(sibling-index() * 60ms);
   }
 }
@@ -172,10 +172,10 @@ function navigate(updateFn) {
   .hero { view-transition-name: hero; }
 
   ::view-transition-old(hero) {
-    animation: fade-scale-out 250ms ease-out both;
+    animation: fade-scale-out 250ms var(--ease-out) both;
   }
   ::view-transition-new(hero) {
-    animation: fade-scale-in 300ms ease-in both;
+    animation: fade-scale-in 300ms var(--ease-out) both;
   }
 }
 ```
@@ -211,7 +211,7 @@ function navigate(updateFn) {
 .popover {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
 }
 
 /* @starting-style is baseline - this works in all modern browsers */
@@ -225,7 +225,7 @@ function navigate(updateFn) {
 /* For the display transition, check discrete support */
 @supports (transition-behavior: allow-discrete) {
   .popover {
-    transition: opacity 200ms ease, transform 200ms ease,
+    transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out),
                 display 200ms allow-discrete, overlay 200ms allow-discrete;
   }
 
@@ -321,7 +321,7 @@ Build in layers - each layer adds richness but nothing breaks without it.
 
 /* Layer 1: Simple transition (universally supported) */
 .section-title {
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out); /* >300ms: page-level or scroll-linked only, not component interactions */
 }
 .section-title.visible {
   opacity: 1;
@@ -401,7 +401,7 @@ Full native modal with enter/exit animation, zero JavaScript.
   /* Open state */
   opacity: 1;
   transform: translateY(0) scale(1);
-  transition: opacity 250ms ease, transform 250ms ease,
+  transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out),
               display 250ms allow-discrete, overlay 250ms allow-discrete;
 
   /* Entry animation */
@@ -444,7 +444,7 @@ Full native modal with enter/exit animation, zero JavaScript.
   /* Animation */
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 150ms ease, transform 150ms ease,
+  transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out),
               display 150ms allow-discrete, overlay 150ms allow-discrete;
 
   @starting-style {
@@ -514,8 +514,8 @@ For scroll-driven animations specifically:
 |---|---|---|
 | `transform` | Low | Yes |
 | `opacity` | Low | Yes |
-| `filter` / `backdrop-filter` | Medium | Yes |
-| `clip-path` | Medium | Yes (in most browsers) |
+| `filter` / `backdrop-filter` | Medium | Often; measure |
+| `clip-path` | Medium | Not reliable across browsers; measure, prefer transform/opacity |
 | `background` (gradients) | Medium | No - repaint |
 | `width` / `height` | High | No - reflow + repaint |
 | `top` / `left` / `right` / `bottom` | High | No - reflow + repaint |

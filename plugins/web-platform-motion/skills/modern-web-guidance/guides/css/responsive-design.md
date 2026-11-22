@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Responsive design
 
 ## Overall best practices

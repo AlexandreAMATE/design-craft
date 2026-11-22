@@ -129,6 +129,8 @@ npx @gltf-transform/cli webp model.glb model.opt.glb --quality 80
 npx @gltf-transform/cli resize model.glb model.opt.glb --width 1024 --height 1024
 ```
 
+> Note: installing KTX-Software downloads a tool and needs the project owner's approval.
+
 KTX2 output — `etc1s`, `uastc` or `optimize --texture-compress ktx2` — shells out to the `ktx` command from KTX-Software (4.4.0 or newer), so install that first; WebP and AVIF are encoded in-process. The single `etc1s` and `uastc` commands convert every texture to one bitstream; the per-slot split (UASTC for normal, occlusion and metallic-roughness, ETC1S for the rest) is what `optimize --texture-compress ktx2` does for you, and `--slots` selects texture roles by name when you need a custom split. Runtime: KTX2 needs KTX2Loader with `detectSupport`; WebP and AVIF decode in the browser.
 
 ## Scene Optimization Commands
@@ -235,6 +237,8 @@ scene.add(gltf.scene);
 ## Common Mistakes
 
 - `import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"` → `import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"`: the three/examples/jsm specifier does not resolve under the import map three.js documents.
+> Note: the `npx` commands in this list download a tool and need the project owner's approval before they are run.
+
 - `npx @gltf-transform/cli optimize model.glb out.glb --compress ktx2` → `npx @gltf-transform/cli optimize model.glb out.glb --compress draco --texture-compress ktx2`: texture codecs belong to `--texture-compress`; `--compress` takes draco, meshopt or quantize.
 - `npx @gltf-transform/cli draco model.glb a.glb && npx @gltf-transform/cli webp a.glb out.glb --quality 80` → `npx @gltf-transform/cli webp model.glb a.glb --quality 80 && npx @gltf-transform/cli draco a.glb out.glb`: every command except `draco`, `meshopt` and `optimize` decodes Draco and meshopt geometry when it reads a file and writes it uncompressed, so geometry compression runs last.
 - `new GLTFLoader().loadAsync("draco.glb")` → `new GLTFLoader().setDRACOLoader(new DRACOLoader()).loadAsync("draco.glb")`: loading a KHR_draco_mesh_compression file without a DRACOLoader throws "No DRACOLoader instance provided".

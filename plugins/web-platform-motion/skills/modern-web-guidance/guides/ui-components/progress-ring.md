@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Progress ring
 
 A progress ring (or circular progress bar) provides visual feedback on the status of a task. Unlike a linear progress bar, its circular shape is ideal for dashboards, card components, or anywhere space is constrained.

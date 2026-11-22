@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Build an interactive hovercard
 
 Hovercards provide an interactive preview of content when a user expresses interest in a link (via hover or focus). This is shown to users before they navigate, and either provides the user with the content they need or helps verify that the link will contain the content they are looking for.

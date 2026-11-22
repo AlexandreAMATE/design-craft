@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Visual effects
 
 ### Depth and texture

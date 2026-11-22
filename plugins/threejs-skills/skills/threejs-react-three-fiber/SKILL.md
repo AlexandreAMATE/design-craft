@@ -200,6 +200,8 @@ Pointer events work under any renderer: the default raycaster tests CPU geometry
 
 Loading hooks suspend; put the boundary above them and the fallback shows while they load.
 
+> Note: `<Environment preset=...>` and the default Draco decoder path download assets at runtime (HDRI from a CDN, decoder from a pinned gstatic URL). Ship local HDRI and decoder files instead (`<Environment files=...>`, `useGLTF.setDecoderPath`).
+
 ```jsx
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";

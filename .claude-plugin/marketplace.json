@@ -9,28 +9,28 @@
       "name": "motion-craft",
       "source": "./plugins/motion-craft",
       "description": "UI animation craft: build, review, verify, choreograph, gestures, performance, vocabulary (MIT, from emilkowalski/skills plus one original skill).",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "license": "MIT"
     },
     {
       "name": "web-platform-motion",
       "source": "./plugins/web-platform-motion",
       "description": "Platform-first motion and visuals: Chrome modern-web-guidance guides, native CSS techniques, Canvas 2D generative art, SVG/scroll/clip-path recipes.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "license": "Apache-2.0 AND MIT"
     },
     {
       "name": "threejs-skills",
       "source": "./plugins/threejs-skills",
       "description": "three.js skills: fundamentals, geometry, materials, lighting, shaders, loaders, animation, performance, R3F (MIT, from CloudAI-X/threejs-skills).",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "license": "MIT"
     },
     {
       "name": "ui-polish",
       "source": "./plugins/ui-polish",
       "description": "UI polish review skills: better-ui, better-layout, better-typography, better-interface, interface-review (MIT, from jakubkrehel/skills).",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "license": "MIT"
     }
   ]

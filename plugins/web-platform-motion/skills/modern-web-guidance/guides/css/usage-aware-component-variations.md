@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Semantic Component Adaptation
 
 Use style queries (`@container style()`) to trigger contextual variations without hardcoding what produces or reacts to each context. This reduces design system coupling and improves extensibility and component encapsulation.

@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # CSS: Modern Architecture
 
 These guidelines provide a high-density reference for writing maintainable and standard-compliant CSS.

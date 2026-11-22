@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Spatial Navigation (Directional Keypad Focus)
 
 Directional focus navigation (using arrow keys or D-Pads) enables keyboard-only and alternative-input users to navigate interactive items based on their visual 2D layout. It is highly beneficial for spatial user interfaces (such as media rails, dashboard panels, or nested catalogs), but it must be implemented carefully to avoid breaking native browser behaviors like viewport scrolling.

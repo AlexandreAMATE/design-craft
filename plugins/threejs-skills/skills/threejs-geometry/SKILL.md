@@ -3,6 +3,8 @@ name: threejs-geometry
 description: "Creating and shaping three.js geometry: built-in shapes, 3D text, vertex buffers and attributes, merging, instancing, batching, point clouds and lines, on WebGL or with WebGPU and TSL. Use when building 3D shapes or text, custom vertex data, custom meshes, instanced meshes, or point clouds."
 ---
 
+> API names target three r186; confirm against the installed three version's docs before use.
+
 # Three.js Geometry
 
 Targets three.js r186. Examples use WebGLRenderer; the WebGPU and TSL section uses WebGPURenderer.

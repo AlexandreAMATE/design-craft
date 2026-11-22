@@ -3,6 +3,8 @@ name: threejs-postprocessing
 description: "Three.js post-processing: composer pass chains, built-in renderer effects, and the WebGPU/TSL node pipeline — bloom, depth of field, ambient occlusion, custom screen effects. Use when adding visual effects, color grading, blur, glow, or screen-space shaders, on WebGL or with WebGPU and TSL."
 ---
 
+> API names target three r186; confirm against the installed three version's docs before use.
+
 # Three.js Post-Processing
 
 Targets three.js r186. Examples use WebGLRenderer; the WebGPU and TSL section uses WebGPURenderer.

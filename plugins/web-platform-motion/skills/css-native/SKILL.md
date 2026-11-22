@@ -1,7 +1,9 @@
 ---
 name: css-native
-description: "Zero-dependency animations and visual techniques - scroll-driven, View Transitions, @starting-style, modern CSS."
+description: "Compact cheat sheet of native CSS animation syntax (scroll timelines, View Transitions, `@starting-style`, anchor positioning). Use for syntax lookup; for design decisions use `animate`."
 ---
+
+> Project motion tokens and art direction take precedence over every number in this skill; where this skill and `animate` disagree on UI timing or easing, `animate` wins. (`var(--ease-out)` below stands for the project's strong ease-out token, for example `cubic-bezier(0.23, 1, 0.32, 1)`; define it if the project has none.)
 
 > **Version-sensitive.** Every API name, SDK gate and browser-support claim below was
 > verified on **2026-09-08** against primary sources. If that date is old, re-verify
@@ -76,7 +78,7 @@ animation-range: contain 0% contain 100%; /* animate while fully visible */
 animation-range: entry 25% exit 75%;      /* custom start/end */
 ```
 
-Use the [Scroll-driven Animations tool](https://scroll-driven-animations.style/tools/view-timeline/ranges/) to visualize ranges interactively.
+Pick ranges from the named list above, or the project's tokens.
 
 ---
 
@@ -94,18 +96,18 @@ document.startViewTransition(() => {
 ```css
 /* Control the transition animation */
 ::view-transition-old(root) {
-  animation: fade-out 200ms ease-out;
+  animation: fade-out 200ms var(--ease-out);
 }
 ::view-transition-new(root) {
-  animation: fade-in 300ms ease-in;
+  animation: fade-in 300ms var(--ease-out);
 }
 
 /* Named transitions for specific elements */
 .hero-image { view-transition-name: hero; }
 
 ::view-transition-group(hero) {
-  animation-duration: 400ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-duration: 400ms; /* >300ms: page-level or scroll-linked only, not component interactions */
+  animation-timing-function: var(--ease-out);
 }
 ```
 
@@ -128,7 +130,7 @@ document.startViewTransition(() => {
 .card { view-transition-class: card; }
 
 ::view-transition-group(*.card) {
-  animation-duration: 350ms;
+  animation-duration: 350ms; /* >300ms: page-level or scroll-linked only, not component interactions */
   animation-timing-function: var(--ease-spring);
 }
 ```
@@ -143,7 +145,7 @@ Native enter animations from `display: none` - no JS timing hacks.
 .dialog {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 300ms ease, transform 300ms ease,
+  transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out),
               display 300ms allow-discrete;
 
   @starting-style {
@@ -197,7 +199,7 @@ Combine with `@starting-style` for animated tooltips:
 .tooltip[popover]:popover-open {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 150ms ease, transform 150ms ease,
+  transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out),
               display 150ms allow-discrete, overlay 150ms allow-discrete;
 
   @starting-style {
@@ -221,13 +223,13 @@ Adapt animations to the component's container size, not the viewport.
 
 @container card (min-width: 400px) {
   .card-content {
-    animation: slide-in-right 400ms var(--ease-out-expo);
+    animation: slide-in-right 400ms var(--ease-out-expo); /* >300ms: page-level or scroll-linked only, not component interactions */
   }
 }
 
 @container card (max-width: 399px) {
   .card-content {
-    animation: fade-in 300ms ease;
+    animation: fade-in 300ms var(--ease-out);
   }
 }
 ```
@@ -250,7 +252,7 @@ Container-relative units in keyframes:
 ```css
 .reveal {
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 600ms cubic-bezier(0.77, 0, 0.175, 1);
+  transition: clip-path 600ms cubic-bezier(0.77, 0, 0.175, 1); /* >300ms: page-level or scroll-linked only, not component interactions */
 }
 .reveal.visible {
   clip-path: inset(0 0 0 0);
@@ -308,7 +310,7 @@ Shape morphing: transition between `circle()`, `ellipse()`, `polygon()`, `inset(
 | BAD | GOOD | Why |
 |---|---|---|
 | `transition: all 300ms` | `transition: opacity 300ms, transform 300ms` | `all` triggers transitions on every property change, causes unexpected animations, and prevents browser optimization |
-| Animate `width`, `height`, `top`, `left` | Animate `transform`, `opacity`, `clip-path`, `filter` | Layout-triggering properties force reflow on every frame - composite-only properties run on GPU |
+| Animate `width`, `height`, `top`, `left` | Animate `transform` and `opacity` (composite-only); use `clip-path` and `filter` only after measuring | Layout-triggering properties force reflow on every frame. Compositing of clip-path animations is not reliable across browsers: measure before relying on it |
 | Scroll-driven animations without fallback | `@supports (animation-timeline: scroll()) { ... }` | Firefox only shipped it in 159 (27 Oct 2026) and Safari in 26 - about one visitor in eight still sees nothing |
 | `@starting-style` without `transition-behavior` | Always pair with `allow-discrete` for display/overlay | Without it, `display: none` transitions are skipped entirely |
 | Anchor positioning without `position-try-fallbacks` | Always define fallback positions | Element clips out of viewport if primary position has no space |

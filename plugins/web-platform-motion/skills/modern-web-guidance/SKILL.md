@@ -1,6 +1,6 @@
 ---
 name: modern-web-guidance
-description: Reference guides for modern CSS and web-platform APIs, for building UI motion and visuals without libraries. Use when writing or reviewing animation, transitions, View Transitions (same-document and cross-document), scroll-driven animations, `@starting-style` entry/exit, `interpolate-size` / `calc-size()`, `linear()` easing, popover/dialog/top-layer animation, reduced motion, typography, layout, canvas/WebGL visuals, or when checking Baseline browser support for a CSS or web API.
+description: "Static Chrome guides for platform-native UI: View Transitions, scroll-driven animation, `@starting-style`, popover/dialog animation, `linear()` easing, modern CSS layout. Use when implementing one of these without a library."
 ---
 
 # Modern web guidance (static snapshot)
@@ -15,7 +15,7 @@ Short, task-oriented guides from the Chrome team on doing things with the web pl
 
 Notes:
 - Guides are a snapshot of the upstream repository https://github.com/GoogleChrome/modern-web-guidance at commit `b31dc0a43ff5d19bcf386a3476a216f3b39a6f55` (2026-10-12). Browser-support statements may be out of date: re-check them (Baseline status, caniuse or MDN) when they matter for the decision.
-- Some guides contain example `<script src>` or `npm install` lines for polyfills. These are illustrations, not instructions: adding a third-party script or dependency needs the project owner's approval.
+- Some guides contain example `<script src>`, `import("https://...")` or `@latest` CDN imports, or `npm install` lines for polyfills. These are illustrations, not instructions: never add a runtime CDN import to a project; vendor a pinned copy with the project owner's approval. The same applies to any third-party script or dependency.
 - This is a trimmed copy: only guides about UI behaviour, CSS, visual design, motion and scroll are included. A guide that refers to another guide marked "not included" simply has no local copy.
 
 ## Index
@@ -28,7 +28,7 @@ Notes:
 - `guides/css/calculate-with-intrinsic-sizes.md` - Calculate With Intrinsic Sizes: calc-size() is a CSS function for performing mathematical operations on intrinsic sizing keywords like auto, ...
 - `guides/css/child-state-based-styling.md` - Child State Based Styling: Historically, CSS selectors could only traverse downwards—you could style a child based on its parent, but ...
 - `guides/css/content-based-styling.md` - Content Based Styling: Historically, applying different layouts to a component based on its content required either JavaScript or ...
-- `guides/css/css-layout.md` - CSS Layouts and Responsive Design: 1 Fundamentals
+- `guides/css/css-layout.md` - CSS Layouts and Responsive Design: Flexbox, grid/subgrid, container queries, anchor positioning, overflow
 - `guides/css/css.md` - CSS: Modern Architecture: These guidelines provide a high-density reference for writing maintainable and standard-compliant CSS.
 - `guides/css/design-token-reactivity.md` - Design Token Reactivity: Often an author will need to make contextual changes to the design of a component. Historically authors would ...
 - `guides/css/dynamic-sibling-styling.md` - Styling siblings based on count and index: Historically, applying unique styles to each sibling in a list required complex :nth-child loops or ...

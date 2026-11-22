@@ -1,7 +1,9 @@
 ---
 name: emil-design-eng
-description: Emil Kowalski's design-engineering philosophy for UI polish, component design, animation decisions, and the invisible details that make software feel great. Use when building or reviewing a UI component's interactions and polish (press and hover states, popover origin, tooltip timing, transitions vs keyframes, clip-path techniques, drag details) and no narrower skill fits.
+description: "Interaction-detail reference (press/hover states, popover origin, tooltip delay, drag dismissal). Use only when building component interactions, not for visual or layout review."
 ---
+
+> Project motion tokens and art direction take precedence over every number in this skill; where this skill and `animate` disagree on UI timing or easing, `animate` wins.
 
 # Design Engineering
 
@@ -29,7 +31,7 @@ People select tools based on the overall experience, not just functionality. Goo
 
 ## Review Format (Required)
 
-When reviewing UI code, you MUST use a markdown table with Before/After columns. Do NOT use a list with "Before:" and "After:" on separate lines. Always output an actual markdown table like this:
+Unless the project or an active review skill defines a format, when reviewing UI code, you MUST use a markdown table with Before/After columns. Do NOT use a list with "Before:" and "After:" on separate lines. Always output an actual markdown table like this:
 
 | Before | After | Why |
 | --- | --- | --- |
@@ -112,7 +114,7 @@ Is the element entering or exiting?
 
 **Never use ease-in for UI animations.** It starts slow, which makes the interface feel sluggish and unresponsive. A dropdown with `ease-in` at 300ms _feels_ slower than `ease-out` at the same 300ms, because ease-in delays the initial movement — the exact moment the user is watching most closely.
 
-**Easing curve resources:** Don't create curves from scratch. Use [easing.dev](https://easing.dev/) or [easings.co](https://easings.co/) to find stronger custom variants of standard easings.
+**Easing curve resources:** Don't create curves from scratch. Use the curves listed here or the project's easing tokens.
 
 ### 4. How fast should it be?
 

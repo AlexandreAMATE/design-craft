@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # CSS Layouts and Responsive Design
 
 1. [1 Fundamentals](#1-fundamentals)

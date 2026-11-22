@@ -27,7 +27,7 @@ When the scope is too large to inspect credibly, narrow it to one complete flow.
 
 ## 2. Send a change to `interface-review`
 
-A request naming a branch, pull request, commit range or uncommitted changes is a change review. Say so and ask the user to run `interface-review`, which is user-invoked and cannot be started from here. Never resolve a change scope yourself, because a guessed diff gives the report a scope nobody can check.
+A request naming a branch, pull request, commit range or uncommitted changes is a change review. Say so and hand it to `interface-review` (offline, read-only). Never resolve a change scope yourself, because a guessed diff gives the report a scope nobody can check.
 
 When `interface-review` hands a review back, apply everything below to it. The cap and the verdict cover `Introduced` and `Regression` findings only, so a change whose only findings are `Pre-existing` is an `Approve`.
 
@@ -46,9 +46,9 @@ Load every owning skill below and complete each domain review before consolidati
 1. `better-layout`
 2. `better-typography`
 3. `better-ui`
-4. Motion: `review-animations` from the `motion-craft` plugin, if installed (otherwise `Not reviewed`)
+4. Motion: routed to `motion-craft` `review-animations`, if that plugin is installed (otherwise `Not reviewed`)
 
-Accessibility, color and writing are not covered by this pack: list them in the coverage table as `Not reviewed: not covered by this pack`. Where an escalation trigger below belongs to one of those domains, report it only when it is evident from the source you already read, and never claim the domain was reviewed.
+Accessibility, color and writing are not covered by this pack: list them in the coverage table as `Not reviewed: not covered by this pack`. An escalation trigger that belongs to one of those domains has no owning skill here: report it only when it is evident in the source you already read, label it "outside this pack's coverage", and never present it as a reviewed domain.
 
 From each, take its principles, its references and its verification checks. Its severity ladder and its format are for standalone use; the ones in this file replace them.
 
@@ -74,7 +74,7 @@ Use one shared severity scale:
 
 Within a severity, rank by how many places the finding reaches and how much one fix buys. A token or shared-component fix outranks the same symptom in one leaf.
 
-**Escalation triggers.** Once the owning skill confirms one of these, it is `HIGH` on sight, never averaged down because the surface is minor:
+**Escalation triggers.** Once an owning skill from this pack confirms one of these, it is `HIGH` on sight, never averaged down because the surface is minor. A trigger whose domain is outside this pack's coverage (accessibility, color, writing) is listed only when the symptom is evident in source, and is labelled as outside coverage:
 
 - An interactive control with no accessible name.
 - A keyboard-reachable control with no visible focus indicator.
@@ -92,7 +92,7 @@ Within a severity, rank by how many places the finding reaches and how much one 
 
 Triggers rank above every other finding and are exempt from the cap, so list every one. A cap may shorten a report; it may never be why a blocker went unreported.
 
-These set severity, not new rules. The owning skill decides whether the symptom is present; this list decides what it costs.
+These set severity, not new rules. An owning skill from this pack decides whether the symptom is present; this list decides what it costs. This list implies no accessibility, color or writing review.
 
 ## Prefer the cheaper fix
 

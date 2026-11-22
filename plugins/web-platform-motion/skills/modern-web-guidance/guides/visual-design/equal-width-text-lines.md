@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Equal-Width Text Lines
 
 Poster-style lockups where each line is scaled so it spans the container's full width can create visually striking headings.

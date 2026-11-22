@@ -1,3 +1,4 @@
+<!-- Modified by design-craft: see PROVENANCE.md -->
 # Theming browser-generated UI
 
 Most browser-generated UI can be customized to some extent using CSS.

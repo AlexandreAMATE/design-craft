@@ -52,6 +52,8 @@ window.addEventListener("resize", () => {
 
 Without a bundler, the browser loads three.js as ES modules through an import map; this is the map for the WebGLRenderer examples above:
 
+> Note: this importmap loads three.js from jsDelivr at runtime and needs the project owner's approval; prefer a local pinned copy or a bundler.
+
 ```html
 <script type="importmap">
 {
@@ -64,6 +66,8 @@ Without a bundler, the browser loads three.js as ES modules through an import ma
 ```
 
 For WebGPURenderer work, map all four keys — `three.tsl.js` imports `three/webgpu`, so the map fails without that entry:
+
+> Note: this importmap loads three.js from jsDelivr at runtime and needs the project owner's approval; prefer a local pinned copy or a bundler.
 
 ```html
 <script type="importmap">

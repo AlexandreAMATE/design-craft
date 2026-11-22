@@ -3,6 +3,8 @@ name: threejs-materials
 description: "Choosing and configuring three.js materials - unlit, diffuse, specular, PBR, toon, point and line materials - shared properties like blending and stencil, environment response, and the WebGPU node-material and TSL equivalents. Use when styling meshes or tuning material behavior."
 ---
 
+> API names target three r186; confirm against the installed three version's docs before use.
+
 # Three.js Materials
 
 Targets three.js r186. Examples use WebGLRenderer; the WebGPU and TSL section uses WebGPURenderer.

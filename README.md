@@ -7,7 +7,7 @@ Marketplace Claude Code local, composé de copies filtrées et vérifiées de pa
 | Plugin | Skills |
 |---|---|
 | `motion-craft` | animate, emil-design-eng, review-animations, choreograph, animation-performance, gestures, animation-vocabulary, verify-motion (original : procédure de vérification d'animation avec un navigateur piloté) |
-| `ui-polish` | better-ui, better-layout, better-typography, better-interface, interface-review (manuel uniquement : `disable-model-invocation: true`) |
+| `ui-polish` | better-ui, better-layout, better-typography, better-interface, interface-review (`interface-review` fonctionne hors ligne : refs locales uniquement) |
 | `web-platform-motion` | modern-web-guidance (93 guides + index), css-native, canvas-generative, svg-scroll-recipes (références SVG, scroll, clip-path, débogage par symptôme) |
 | `threejs-skills` | threejs-animation, -asset-pipeline, -fundamentals, -geometry, -interaction, -lighting, -loaders, -materials, -performance, -postprocessing, -react-three-fiber, -shaders, -textures |
 
@@ -53,6 +53,10 @@ Héberger ce dépôt sur un serveur git interne (l'hôte ci-dessous est un exemp
 ```
 
 Pour un hôte autre que GitHub, utiliser `{ "source": "git", "url": "...", "ref": "..." }`. L'entrée de la liste blanche doit correspondre exactement (url, ref, path) à la source déclarée.
+
+## Invocation des skills de revue
+
+`review-animations` et `interface-review` n'ont plus `disable-model-invocation: true` (retiré par rapport à l'amont, voir PROVENANCE) : l'agent peut les invoquer. `interface-review` n'utilise ni réseau, ni `gh`, ni worktree.
 
 ## Mise à jour
 

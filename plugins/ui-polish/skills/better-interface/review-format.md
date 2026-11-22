@@ -8,7 +8,7 @@ State the exact scope, stack and styling conventions, the project convention doc
 
 | Domain | Evidence inspected | Result |
 | --- | --- | --- |
-| Accessibility | Files, components, states or checks | Findings count, including any the cap excluded, or `Clear` |
+| Layout | Files, components, states or checks | Findings count, including any the cap excluded, or `Clear` |
 
 Include every domain listed under **Use domain skills as the sources of truth**. `Clear` means inspected with no actionable finding; `Not reviewed` must explain why. Always list accessibility, color and writing as `Not reviewed: not covered by this pack`.
 
@@ -18,7 +18,7 @@ One table, ordered by severity, then by reach:
 
 | Severity | Domain | Location | Before | After | Why |
 | --- | --- | --- | --- | --- | --- |
-| HIGH | Accessibility | `src/Dialog.tsx:42` | `<button><XIcon /></button>` | Add `aria-label="Close"` and hide the icon from the accessibility tree | The icon-only control has no accessible name |
+| HIGH | Layout | `src/Panel.tsx:18` | `width: 384px` | `width: min(384px, 100%)` | The panel is clipped at 320px width |
 
 - **Severity** comes from **Rank by user impact**.
 - **Domain** is the owning skill without the `better-` prefix.

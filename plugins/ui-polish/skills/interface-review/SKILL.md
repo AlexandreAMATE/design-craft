@@ -1,6 +1,5 @@
 ---
 name: interface-review
-disable-model-invocation: true
 description: Reviews a branch, pull request or uncommitted change for the interface problems it introduced or regressed, across layout, typography and UI polish (motion is delegated to the `motion-craft` plugin; accessibility, color and writing are not covered by this pack).
 ---
 
@@ -98,9 +97,9 @@ If `better-interface` is unavailable, report the scope block and the files in sc
 
 ## Never mutate the working tree
 
-A change review is read-only, including the checkout. `git fetch` writes only to `.git` and is permitted. `gh pr checkout`, `git checkout`, `git switch` and `git stash` rewrite the files the author has open, so they are never permitted. Fetch pull request refs and read them in place.
+A change review is read-only and offline, including the checkout. Use only refs already present locally (`git diff`, `git log`, `git show`, `git merge-base`). Never fetch, deepen, set-head, call `gh` or add worktrees; if a ref is missing, ask the user. `git checkout`, `git switch` and `git stash` rewrite the files the author has open, so they are never permitted. Read other revisions in place with `git show`.
 
-Rendered verification is opt-in here, in place of `better-interface`'s **Verify what can be verified**. Mark visual and runtime claims **Not verified** unless the project exposes a cheap preview or the user asks for a rendered review. A removal read off the diff with nothing replacing it is a source finding and needs no render. For `working` and `branch`, the checkout already is the head, so render it in place. For any other target, render an isolated worktree such as `git worktree add /tmp/review-<n> refs/remotes/pr/<n>` and remove it when done.
+Rendered verification is opt-in here, in place of `better-interface`'s **Verify what can be verified**. Mark visual and runtime claims **Not verified** unless the project exposes a cheap preview or the user asks for a rendered review. A removal read off the diff with nothing replacing it is a source finding and needs no render. For `working` and `branch`, the checkout already is the head, so render it in place. For any other target, mark visual claims **Not verified**: do not create a worktree.
 
 ## Before you finish
 
@@ -109,11 +108,11 @@ Rendered verification is opt-in here, in place of `better-interface`'s **Verify 
 | The scope block counts only uncommitted files while `HEAD` is ahead of the merge base | Review the branch range plus the uncommitted changes, with both counts |
 | A report on `HEAD~1..HEAD` the user never chose | State the facts and offer the routes in **With no change, ask rather than invent one** |
 | A changed shared component with no consumer under `Surfaces expanded` | Expand to its consumers and name the ones you skipped |
-| A deleted `aria-label`, `outline` or `prefers-reduced-motion` with no finding and no note | Route it to its owner through [Removed signals](removed-signals.md) |
+| A deleted `max-width`, `min-width: 0`, `overflow-wrap` or `prefers-reduced-motion` with no finding and no note | Route it to its owner through [Removed signals](removed-signals.md) |
 | A `Regression` whose removed attribute reappears elsewhere in the diff | Check the [equivalent replacements](removed-signals.md#equivalent-replacements) first |
 | A finding on an untouched consumer of a changed token statused `Pre-existing` | The change caused it, so it is `Introduced` or `Regression` |
 | A line outside every hunk statused `Introduced` with no causing change named | Blame it against the reviewed range |
-| `gh pr checkout` or `git switch` in the command log | Fetch the ref and read files with `git show` |
+| `gh`, `git fetch`, `git worktree` or `git switch` in the command log | Use only local refs and read files with `git show`; ask the user if a ref is missing |
 | A cited line that does not match `git show <head-ref>:path` | Cite against the head ref named in the scope block |
 
 ## Review output format
@@ -136,7 +135,7 @@ Then the findings, with a `Status` column per **Classify every finding**:
 
 | Severity | Domain | Status | Location | Before | After | Why |
 | --- | --- | --- | --- | --- | --- | --- |
-| HIGH | Accessibility | Regression | `src/Dialog.tsx:42` | `aria-label="Close"` removed in this change | Restore `aria-label="Close"` on the icon-only control | The close control had an accessible name before this change and no longer does |
+| HIGH | Layout | Regression | `src/Panel.tsx:18` | `max-width: 100%` removed in this change, leaving `width: 384px` | Restore `width: min(384px, 100%)` | The panel fit a 320px viewport before this change and no longer does |
 
 With no `Introduced` or `Regression` findings, omit the table and state "No actionable interface findings in this change."
 
